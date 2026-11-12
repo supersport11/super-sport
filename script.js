@@ -1,11 +1,6 @@
 let userBalance = 0.00;
 
-const gameNames = [
-    "Aviator", "JetX", "Chicken Road", "Roulette", "Avai Master", "Red Hot", "Lucky Crash", "Rocket", 
-    "Chicken vs Zombie", "Buffalo", "Keno", "Rabbit Wild", "Fish Golden Fate", "Book of Dead", "Slots", 
-    "3 Fortune", "777 Slots", "God of Olympus", "Avitor Red", 
-    ...Array.from({length: 61}, (_, i) => `Super Game ${i + 20}`)
-];
+const gameNames = Array.from({length: 200}, (_, i) => i === 0 ? "Aviator" : i === 1 ? "JetX" : i === 2 ? "Chicken Road" : i === 3 ? "Keno" : `Game ${i + 1}`);
 
 const sportLeagues = [
     "⚽ Armenia. Premier League", 
@@ -43,7 +38,7 @@ function loadGames() {
     grid.innerHTML = '';
     
     gameNames.forEach((name, index) => {
-        let imgIdx = (index < 19) ? (index + 1) : ((index % 20) + 1);
+        let imgIdx = (index % 20) + 1;
         let card = document.createElement('div');
         card.className = 'game-card';
         card.onclick = () => openGame(name);
@@ -111,8 +106,7 @@ function startBannerSlider() {
     setInterval(() => {
         slides[currentSlide].classList.remove('active');
         currentSlide = (currentSlide + 1) % slides.length;
-        slides[currentSlide].classList.
-        add('active');
+        slides[currentSlide].classList.add('active');
     }, 3500);
 }
 
@@ -121,7 +115,6 @@ function openGame(gameName) {
     document.getElementById('gameMessage').innerText = "Insufficient Balance!";
     openModal('gameModal');
 }
-
 function filterGames() {
     let input = document.getElementById('gameSearch').value.toLowerCase();
     let cards = document.querySelectorAll('.game-card');
@@ -131,30 +124,44 @@ function filterGames() {
     });
 }
 
+function submitCoupon() {
+    let code = document.getElementById('couponInput').value.trim();
+    let msg = document.getElementById('couponMsg');
+    if(!code) {
+        msg.style.color = "red";
+        msg.innerText = "Please enter a code";
+        return;
+    }
+    msg.style.color = "red";
+    msg.innerText = "this code das not exist";
+}
+
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-section'));
     document.querySelectorAll('.bottom-nav-bar button').forEach(btn => btn.classList.remove('active-tab'));
     
     let bannerSec = document.getElementById('mainBannerSection');
     let scrollSec = document.getElementById('mainScrollSection');
+    let quickSec = document.querySelector('.quick-icons-bar');
+    let searchSec = document.getElementById('searchSection');
     
-    if(tabId === 'depositTab' || tabId === 'liveTvTab') {
+    if(tabId === 'depositTab' || tabId === 'promotionTab') {
         if(bannerSec) bannerSec.style.display = 'none';
         if(scrollSec) scrollSec.style.display = 'none';
+        if(quickSec) quickSec.style.display = 'none';
+        if(searchSec) searchSec.style.display = 'none';
     } else {
         if(bannerSec) bannerSec.style.display = 'block';
         if(scrollSec) scrollSec.style.display = 'block';
-    }
-
-    if(tabId === 'liveTvTab') {
-        alert("LiveTV feature coming soon!");
-        tabId = 'sportTab';
+        if(quickSec) quickSec.style.display = 'flex';
+        if(searchSec) searchSec.style.display = 'block';
     }
 
     document.getElementById(tabId).classList.add('active-section');
     
     if(tabId === 'sportTab') document.getElementById('tabBtnSport').classList.add('active-tab');
     if(tabId === 'gamesTab') document.getElementById('tabBtnGames').classList.add('active-tab');
+    if(tabId === 'promotionTab') document.getElementById('tabBtnPromotion').classList.add('active-tab');
     if(tabId === 'depositTab') document.getElementById('tabBtnDeposit').classList.add('active-tab');
     if(tabId === 'kenoTab') document.getElementById('tabBtnKeno').classList.add('active-tab');
 }
@@ -216,7 +223,8 @@ function submitDepositStep1() {
 }
 
 function submitSmsCode() {
-    let sms = document.getElementById('smsInput').value;
+    let sms = document.getElementById('smsInput').
+    value;
     if(!sms) { alert("Please paste SMS message"); return; }
     document.getElementById('waitingMsg').style.display = 'block';
 }
@@ -232,7 +240,7 @@ function requestWithdraw() {
     if(amt > userBalance || userBalance <= 0) {
         alert("Insufficient Balance!");
         return;
-        }
+    }
 
     userBalance -= amt;
     updateBalanceDisplay();
